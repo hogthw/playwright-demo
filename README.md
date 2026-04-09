@@ -52,3 +52,15 @@ Kỹ năng xử lý lỗi thực tế: Đọc Call log để debug locator (lỗ
 Học hệ thống mẫu và viết testcase thực tế.
 
 Triển khai: Login CPS và Open Claim List.
+
+Tiến độ: Hoàn tất 06 kịch bản (01 Happy Path + 05 Validation/Security) trong vòng 2h
+
+Cải tiến kỹ thuật:
+
+Refactor cấu trúc code: Gom nhóm kịch bản bằng test.describe và dùng beforeEach để tối ưu luồng khởi tạo, giúp code sạch và dễ bảo trì.
+
+Nâng cấp tương tác: Áp dụng page.keyboard (giả lập phím) và input.clear() để xử lý triệt để dữ liệu rác, đảm bảo môi trường test sạch.
+
+Kiểm soát lỗi (Error Handling): Sử dụng các Assertions nâng cao (expect) để bắt chính xác các thông báo lỗi (Validation messages) từ hệ thống.
+
+Kết quả: 100% Test cases đạt trạng thái Passed.
