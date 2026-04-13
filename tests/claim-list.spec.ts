@@ -33,7 +33,7 @@ test.describe('Claim List Feature', () => {
     await expect(page.getByRole('table')).toBeVisible();
   });
 
- test('TC11 - Search claim', async ({ page }) => {
+test('TC11 - Search claim', async ({ page }) => {
   await login(page);
   await page.waitForLoadState('networkidle');
 
@@ -41,12 +41,13 @@ test.describe('Claim List Feature', () => {
 
   const searchBox = page.locator('input[name="field_client_target_id"]');
 
-  await expect(searchBox).toBeVisible();
-
   await searchBox.fill('CR2604100346');
-  await page.keyboard.press('Enter');
 
-  await expect(page.getByText('CR2604100346')).toBeVisible();
+  await page.getByRole('button', { name: /apply/i }).click();
+
+  await page.waitForLoadState('networkidle');
+
+  await expect(page.locator('table')).toContainText('CR2604100346');
 });
 
 });
