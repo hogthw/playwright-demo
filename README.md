@@ -174,19 +174,14 @@ Mở claim list
 Expected Result:
 Hiển thị bảng hoặc danh sách claim
 Có dữ liệu nếu hệ thống có sẵn
-+ TC09: Không có dữ liệu
-Steps:
-Truy cập claim list khi không có dữ liệu
-Expected Result:
-Hiển thị trạng thái rỗng (No data)
-+ TC10: Reload trang
++ TC09: Reload trang
 Steps:
 Mở claim list
 Refresh trang
 Expected Result:
 Dữ liệu vẫn hiển thị
 Không bị mất trạng thái
-+ TC11: Tìm kiếm claim
++ TC10: Tìm kiếm claim
 Steps:
 Nhập keyword hoặc Claim ID vào ô filter
 Click nút “Apply”

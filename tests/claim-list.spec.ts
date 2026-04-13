@@ -22,7 +22,7 @@ test.describe('Claim List Feature', () => {
     await expect(page.getByRole('table')).toBeVisible();
   });
 
-  test('TC10 - Reload page vẫn giữ data', async ({ page }) => {
+  test('TC09 - Reload page vẫn giữ data', async ({ page }) => {
     await login(page);
     await page.waitForLoadState('networkidle');
 
@@ -33,7 +33,7 @@ test.describe('Claim List Feature', () => {
     await expect(page.getByRole('table')).toBeVisible();
   });
 
-test.skip('TC11 - Search claim', async ({ page }) => {
+test.skip('TC10 - Search claim', async ({ page }) => {
   // SKIP: STG environment does not support search by Claim ID (CR code)
   await login(page);
   await page.waitForLoadState('networkidle');
