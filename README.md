@@ -1,4 +1,4 @@
-Báo cáo Day 1 - Automation Test với Playwright
+# Day 1 - Automation Test với Playwright
 Project thực hiện nghiên cứu công cụ Playwright và triển khai kiểm thử tự động cho tính năng Liên hệ trên web ETON (https://eton.vn/vi/Contact).
 
 * Demo và Kết quả
@@ -6,7 +6,7 @@ Link Video Demo: (https://www.youtube.com/watch?v=mQ0f5I2rDsg)
 
 Source code: Nằm trong thư mục tests/
 
-Lệnh chạy test: npx playwright test
+Lệnh chạy test: npx playwright test | npx playwright test --ui
 
 Lệnh xem báo cáo: npx playwright show-report
 
@@ -48,163 +48,147 @@ Sử dụng getByRole, getByText kết hợp với exact match để xử lý l�
 
 Kỹ năng xử lý lỗi thực tế: Đọc Call log để debug locator (lỗi strict mode violation) và cấu hình tự động chụp Screenshot khi test thất bại.
 
-# Day 2 - Testing Theory & Application
+# Day 2
+Test-Driven Development (TDD)
+Khái niệm
+Test-Driven Development (TDD) là phương pháp phát triển phần mềm trong đó test được viết trước, sau đó mới viết code để đáp ứng test.
+Mục tiêu là đảm bảo code đúng yêu cầu ngay từ đầu và dễ bảo trì về sau.
 
-## 1. Lý thuyết testing
+Quy trình TDD
+Một vòng lặp TDD bao gồm các bước sau:
 
-### Testing là gì?
-Testing là quá trình kiểm tra hệ thống nhằm đảm bảo:
-- Chức năng hoạt động đúng
-- Không lỗi ở các luồng chính
-- Dữ liệu hiển thị chính xác
-
-Testing không chỉ là click cho chạy, mà là đảm bảo khi user sử dụng thực tế thì không xảy ra lỗi.
-
----
-
-### Mục tiêu của testing
-- Phát hiện lỗi trước khi release production
-- Đảm bảo flow business chạy đúng
-- Giảm rủi ro khi nhiều bộ phận cùng sử dụng hệ thống
-
----
-
-## 2. Các loại test
-
-### Functional Testing
-Kiểm tra chức năng hệ thống
-
+1. Write Test (Viết test trước)
+Xác định chức năng cần thực hiện (ví dụ: login thành công)
+Viết test case mô tả hành vi mong muốn
+Ở bước này chưa có code xử lý nên test sẽ fail
 Ví dụ:
-- Login có thành công không
-- Tạo claim có lưu được không
-
----
-
-### UI Testing
-Kiểm tra giao diện
-
+User nhập đúng username và password thì đăng nhập thành công
+2. Run Test (Chạy test – Fail)
+Thực thi test vừa viết
+Kết quả sẽ fail do chưa có phần implement
+Ý nghĩa:
+Đảm bảo test hoạt động đúng
+Tránh trường hợp test sai nhưng vẫn pass
+3. Write Code (Viết code để pass test)
+Viết code tối thiểu để test có thể pass
+Không cần tối ưu ngay, chỉ cần đúng logic
 Ví dụ:
-- Button có click được không
-- Input có nhập được không
+Implement chức năng login
+Trong automation: viết đúng selector và action
+4. Run Test (Pass)
+Chạy lại test sau khi đã viết code
+Kết quả phải pass
+Ý nghĩa:
+Xác nhận code đã đáp ứng yêu cầu đề ra
+5. Refactor (Tối ưu code)
+Làm sạch và cải thiện code
+Tối ưu cấu trúc
+Loại bỏ code dư
+Tái sử dụng lại các phần chung
+Sau khi refactor, test vẫn phải pass
+6. Lặp lại
+Tiếp tục viết test cho chức năng mới
+Lặp lại toàn bộ quy trình
+Tóm tắt vòng lặp TDD
+Viết test
+Chạy test (fail)
+Viết code để pass
+Chạy test (pass)
+Refactor
+Lặp lại
 
----
+Áp dụng trong project
+Ví dụ với chức năng login:
+Viết test kiểm tra login thành công
+Chạy test và thấy fail
+Viết code để thực hiện login
+Chạy lại test và pass
 
-### Integration Testing
-Kiểm tra luồng giữa các hệ thống/bộ phận
-
-Ví dụ:
-- CPS → Kho → Transport
-
----
-
-### End-to-End Testing
-Kiểm tra toàn bộ flow từ đầu đến cuối
-
-Ví dụ:
-- Login → tạo claim → xử lý → đóng claim
-
-(Playwright dùng để automate phần này)
-
----
-
-## 3. Các kiểu test case
-
-### Positive
-- Test với dữ liệu đúng
-- Expected: hệ thống hoạt động thành công
-
-Ví dụ:
-- Login đúng → vào hệ thống
-- Nhập đủ thông tin → tạo claim thành công
-
----
-
-### Negative
-- Test với dữ liệu sai hoặc thiếu
-- Expected: hệ thống báo lỗi
-
-Ví dụ:
-- Sai OTP
-- Không nhập email
-- Thiếu field
-
----
-
-### Edge Case
-- Test các trường hợp đặc biệt, dễ gây lỗi
-
-Ví dụ:
-- Email hợp lệ nhưng chưa tồn tại
-- Upload file lớn
-- Nhập nội dung quá dài
-
----
-
-## 4. Áp dụng vào hệ thống Claim
-
-### Các thành phần
-- Client
-- CPS
-- Kho
-- Transport
-- 3PL
-
----
-
-### Flow thực tế
-
-1. Client login bằng email + OTP  
-2. Tạo claim request  
-3. CPS tiếp nhận (status: Mở → Mới)  
-4. CPS xử lý và assign  
-5. Kho / Transport xử lý  
-6. CPS trả kết quả cho client  
-7. Đóng request  
-
----
-
-## 5. Các điểm cần test
-
-### Luồng chính
-- Login
-- Tạo claim
-- CPS thấy claim
-- CPS tiếp nhận
-- Assign xử lý
-- Các bên phản hồi
-- Đóng claim
-
----
-
-### Những chỗ dễ lỗi
-- OTP login (sai mã, timeout)
-- Search / filter claim
-- Status không cập nhật đúng
-- Assign sai người
-- Upload file lỗi
-
----
-
-### Dữ liệu cần kiểm tra
-- Claim có được lưu không
-- Status có đổi đúng không
-- Nội dung phản hồi có đúng không
-- File có upload được không
-
----
-
-## 6. Mapping lý thuyết với thực tế
-
-- Functional → Login, tạo claim  
-- Integration → CPS, Kho, Transport  
-- End-to-End → toàn bộ flow claim  
-- Negative → sai OTP, thiếu dữ liệu  
-- Edge case → file lớn, dữ liệu dài  
-
----
-
-## 7. Kết luận
-
-- Testing cần hiểu flow hệ thống trước khi viết test
-- Không chỉ test happy case mà cần test cả negative và edge case
-- Hệ thống nhiều role → dễ phát sinh lỗi integration
+# Test Case Login STG & Claim
+Scope
+Login CPS
+Open Claim List
+- I. Login CPS
++ TC01: Login thành công với thông tin hợp lệ
+Precondition: User có tài khoản hợp lệ
+Steps:
+Truy cập trang login
+Nhập username hợp lệ
+Nhập password đúng
+Click nút “Đăng nhập”
+Expected Result: Đăng nhập thành công
+Điều hướng sang trang dashboard (URL không còn /login)
++ TC02: Bỏ trống password
+Steps:
+Nhập username
+Để trống password
+Click “Đăng nhập”
+Expected Result:
+Hiển thị thông báo yêu cầu nhập password
+Form không được submit
++ TC03: Bỏ trống username
+Steps:
+Để trống username
+Nhập password
+Click “Đăng nhập”
+Expected Result:
+Hiển thị thông báo yêu cầu nhập username
+Không submit form
++ TC04: Sai username hoặc password
+Steps:
+Nhập username không hợp lệ
+Nhập password không đúng
+Click “Đăng nhập”
+Expected Result:
+Hiển thị thông báo lỗi đăng nhập
+Không điều hướng sang trang khác
++ TC05: Đăng nhập bằng phím Enter
+Steps:
+Nhập username và password hợp lệ
+Nhấn phím Enter
+Expected Result:
+Đăng nhập thành công
+Điều hướng đúng trang
++ TC06: Clear input rồi nhập lại
+Steps:
+Nhập username và password
+Xóa toàn bộ dữ liệu trong input
+Nhập lại thông tin hợp lệ
+Click “Đăng nhập”
+Expected Result:
+Đăng nhập thành công
+Không bị lỗi validate trước đó
+- II. Open Claim List
++ TC07: Mở trang claim list thành công
+Precondition:
+User đã đăng nhập
+Steps:
+Click menu “Claim”
+Expected Result:
+Hiển thị trang danh sách claim
+Không lỗi giao diện
++ TC08: Hiển thị danh sách claim
+Steps:
+Login
+Mở claim list
+Expected Result:
+Hiển thị bảng hoặc danh sách claim
+Có dữ liệu nếu hệ thống có sẵn
++ TC09: Không có dữ liệu
+Steps:
+Truy cập claim list khi không có dữ liệu
+Expected Result:
+Hiển thị trạng thái rỗng (No data)
++ TC10: Reload trang
+Steps:
+Mở claim list
+Refresh trang
+Expected Result:
+Dữ liệu vẫn hiển thị
+Không bị mất trạng thái
++ TC11: Tìm kiếm claim (nếu có)
+Steps:
+Nhập keyword hoặc Order ID
+Thực hiện tìm kiếm
+Expected Result:
+Hiển thị kết quả đúng với điều kiện tìm kiếm
