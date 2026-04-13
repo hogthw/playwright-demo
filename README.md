@@ -186,9 +186,11 @@ Refresh trang
 Expected Result:
 Dữ liệu vẫn hiển thị
 Không bị mất trạng thái
-+ TC11: Tìm kiếm claim (nếu có)
++ TC11: Tìm kiếm claim
 Steps:
-Nhập keyword hoặc Order ID
-Thực hiện tìm kiếm
+Nhập keyword hoặc Claim ID vào ô filter
+Click nút “Apply”
+Đợi danh sách reload
 Expected Result:
-Hiển thị kết quả đúng với điều kiện tìm kiếm
+Danh sách hiển thị dữ liệu phù hợp với điều kiện tìm kiếm
+Nếu tồn tại record → hiển thị đúng Claim ID trong bảng
