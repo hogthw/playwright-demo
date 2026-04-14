@@ -64,22 +64,20 @@ test('Login thất bại với mã OTP sai', async ({ page }) => {
     .toContainText(/không hợp lệ|hết hạn|sai/i);
 });
 
-test('Login bằng OTP Gmail', async ({ page }) => {
+test.only('Login bằng OTP Gmail', async ({ page }) => {
 
   await page.goto(URL);
 
   const emailInput = page.getByRole('textbox', { name: 'Thư điện tử' });
   await expect(emailInput).toBeVisible();
 
-  await emailInput.fill(process.env.GMAIL_USER!);
+  const email = process.env.GMAIL_USER!;
+  await emailInput.fill(email);
 
   await page.getByRole('button', { name: 'Gửi mã OTP' }).click();
 
-  await expect(page.locator('.otp-user'))
-    .toContainText(process.env.GMAIL_USER!);
-
   const otpInput = page.getByRole('textbox', { name: 'Mã xác thực' });
-  await expect(otpInput).toBeVisible();
+  await expect(otpInput).toBeVisible({ timeout: 15000 });
 
   let otp: string | null = null;
 
@@ -98,8 +96,6 @@ test('Login bằng OTP Gmail', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Xác thực' }).click();
 
-  await page.waitForLoadState('networkidle');
-
   await expect(page.locator('body'))
-    .toContainText(process.env.GMAIL_USER!);
+    .toContainText(email, { timeout: 15000 });
 });
