@@ -1,82 +1,105 @@
 import { test, expect } from '@playwright/test';
+import 'dotenv/config';
+import { getOTP } from '../utils/getOTP';
 
-const URL = 'https://stg-cm-backoffice.eton.vn/user/login';
+const URL = 'https://stg-cm-backoffice.eton.vn/client/otp-login';
 
-const USER = {
-  username: 'hongthao',
-  password: 'Thaovu@123',
-};
 
-test.describe('Login Feature', () => {
+test('Check lỗi bỏ trống Email', async ({ page }) => {
+  await page.goto(URL);
 
-  test('TC01 - Login thành công', async ({ page }) => {
-    await page.goto(URL);
+  await page.getByRole('button', { name: 'Gửi mã OTP' }).click();
 
-    await page.getByRole('textbox', { name: 'Tên người dùng' }).fill(USER.username);
-    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill(USER.password);
-    await page.getByRole('button', { name: 'Đăng nhập' }).click();
+  await expect(page.locator('body'))
+    .toContainText(/vui lòng nhập email/i);
+});
 
-    await expect(page).not.toHaveURL(/login/);
-  });
 
-  test('TC02 - Bỏ trống password', async ({ page }) => {
-    await page.goto(URL);
+test('Check lỗi Email sai định dạng', async ({ page }) => {
+  await page.goto(URL);
 
-    await page.getByRole('textbox', { name: 'Tên người dùng' }).fill(USER.username);
-    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill('');
-    await page.getByRole('button', { name: 'Đăng nhập' }).click();
+  const emailInput = page.getByRole('textbox', { name: 'Thư điện tử' });
 
-    await expect(page).toHaveURL(/login/);
-  });
+  await emailInput.fill('ffff');
 
-  test('TC03 - Bỏ trống username', async ({ page }) => {
-    await page.goto(URL);
+  await page.getByRole('button', { name: 'Gửi mã OTP' }).click();
 
-    await page.getByRole('textbox', { name: 'Tên người dùng' }).fill('');
-    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill(USER.password);
-    await page.getByRole('button', { name: 'Đăng nhập' }).click();
+  const validationMessage = await emailInput.evaluate(
+    (input: HTMLInputElement) => input.validationMessage
+  );
 
-    await expect(page).toHaveURL(/login/);
-  });
+  expect(validationMessage).toContain("@");
+});
 
-  test('TC04 - Sai username/password', async ({ page }) => {
-    await page.goto(URL);
 
-    await page.getByRole('textbox', { name: 'Tên người dùng' }).fill('wronguser');
-    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill('wrongpass');
-    await page.getByRole('button', { name: 'Đăng nhập' }).click();
+test('Check Email chưa được tạo trên hệ thống', async ({ page }) => {
+  await page.goto(URL);
 
-    await expect(page).toHaveURL(/login/);
-  });
+  await page.getByRole('textbox', { name: 'Thư điện tử' })
+    .fill('fake_email_999999@gmail.com');
 
-  test('TC05 - Login bằng phím Enter', async ({ page }) => {
-    await page.goto(URL);
+  await page.getByRole('button', { name: 'Gửi mã OTP' }).click();
 
-    await page.getByRole('textbox', { name: 'Tên người dùng' }).fill(USER.username);
-    await page.getByRole('textbox', { name: 'Mật khẩu' }).fill(USER.password);
-    await page.keyboard.press('Enter');
+  await expect(page.locator('body'))
+    .toContainText(/không tồn tại|không tìm thấy|tài khoản/i);
+});
 
-    await expect(page).not.toHaveURL(/login/);
-  });
+test('Login thất bại với mã OTP sai', async ({ page }) => {
 
-  test('TC06 - Clear input rồi nhập lại', async ({ page }) => {
-    await page.goto(URL);
+  await page.goto(URL);
 
-    const username = page.getByRole('textbox', { name: 'Tên người dùng' });
-    const password = page.getByRole('textbox', { name: 'Mật khẩu' });
+  await page.getByRole('textbox', { name: 'Thư điện tử' })
+    .fill(process.env.GMAIL_USER!);
 
-    await username.fill('temp');
-    await password.fill('temp');
+  await page.getByRole('button', { name: 'Gửi mã OTP' }).click();
 
-    await username.fill('');
-    await password.fill('');
+  const otpInput = page.getByRole('textbox', { name: 'Mã xác thực' });
+  await expect(otpInput).toBeVisible();
 
-    await username.fill(USER.username);
-    await password.fill(USER.password);
+  await otpInput.fill('000000');
 
-    await page.getByRole('button', { name: 'Đăng nhập' }).click();
+  await page.getByRole('button', { name: 'Xác thực' }).click();
 
-    await expect(page).not.toHaveURL(/login/);
-  });
+  await expect(page.locator('body'))
+    .toContainText(/không hợp lệ|hết hạn|sai/i);
+});
 
+test('Login bằng OTP Gmail', async ({ page }) => {
+
+  await page.goto(URL);
+
+  const emailInput = page.getByRole('textbox', { name: 'Thư điện tử' });
+  await expect(emailInput).toBeVisible();
+
+  await emailInput.fill(process.env.GMAIL_USER!);
+
+  await page.getByRole('button', { name: 'Gửi mã OTP' }).click();
+
+  await expect(page.locator('.otp-user'))
+    .toContainText(process.env.GMAIL_USER!);
+
+  const otpInput = page.getByRole('textbox', { name: 'Mã xác thực' });
+  await expect(otpInput).toBeVisible();
+
+  let otp: string | null = null;
+
+  for (let i = 0; i < 10; i++) {
+    otp = await getOTP();
+    console.log(`Lần thử ${i + 1}: OTP ->`, otp);
+
+    if (otp) break;
+
+    await page.waitForTimeout(3000);
+  }
+
+  expect(otp).toBeTruthy();
+
+  await otpInput.fill(otp!);
+
+  await page.getByRole('button', { name: 'Xác thực' }).click();
+
+  await page.waitForLoadState('networkidle');
+
+  await expect(page.locator('body'))
+    .toContainText(process.env.GMAIL_USER!);
 });

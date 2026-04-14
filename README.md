@@ -104,88 +104,46 @@ Chạy test và thấy fail
 Viết code để thực hiện login
 Chạy lại test và pass
 
-# Test Case Login STG & Claim
+# Test Case Login STG
 Scope
 Login CPS
-Open Claim List
-- I. Login CPS
-+ TC01: Login thành công với thông tin hợp lệ
-Precondition: User có tài khoản hợp lệ
+TC01 – Bỏ trống email
 Steps:
-Truy cập trang login
-Nhập username hợp lệ
-Nhập password đúng
-Click nút “Đăng nhập”
-Expected Result: Đăng nhập thành công
-Điều hướng sang trang dashboard (URL không còn /login)
-+ TC02: Bỏ trống password
+Vào trang login OTP
+Không nhập email
+Click “Gửi mã OTP”
+Expected:
+Hiển thị thông báo: “Vui lòng nhập Email”
+TC02 – Email sai định dạng
 Steps:
-Nhập username
-Để trống password
-Click “Đăng nhập”
-Expected Result:
-Hiển thị thông báo yêu cầu nhập password
-Form không được submit
-+ TC03: Bỏ trống username
+Nhập email: ffff
+Click “Gửi mã OTP”
+Expected:
+Hiển thị lỗi định dạng email (browser validation hoặc message UI)
+TC03 – Email chưa tồn tại
 Steps:
-Để trống username
-Nhập password
-Click “Đăng nhập”
-Expected Result:
-Hiển thị thông báo yêu cầu nhập username
-Không submit form
-+ TC04: Sai username hoặc password
+Nhập email không có trong hệ thống
+fake_email@gmail.com
+Click “Gửi mã OTP”
+Expected:
+Hiển thị lỗi: “Tài khoản không tồn tại trong hệ thống”
+TC04 – OTP sai
 Steps:
-Nhập username không hợp lệ
-Nhập password không đúng
-Click “Đăng nhập”
-Expected Result:
-Hiển thị thông báo lỗi đăng nhập
-Không điều hướng sang trang khác
-+ TC05: Đăng nhập bằng phím Enter
+Nhập email hợp lệ
+Gửi OTP
+Nhập OTP: 000000
+Click “Xác thực”
+Expected:
+Hiển thị lỗi: OTP không hợp lệ / sai / hết hạn
+LOGIN SUCCESS
+TC06 – Đăng nhập OTP thành công
 Steps:
-Nhập username và password hợp lệ
-Nhấn phím Enter
-Expected Result:
+Nhập email hợp lệ
+Gửi OTP
+Lấy OTP từ Gmail
+Nhập OTP đúng
+Click “Xác thực”
+Expected:
 Đăng nhập thành công
-Điều hướng đúng trang
-+ TC06: Clear input rồi nhập lại
-Steps:
-Nhập username và password
-Xóa toàn bộ dữ liệu trong input
-Nhập lại thông tin hợp lệ
-Click “Đăng nhập”
-Expected Result:
-Đăng nhập thành công
-Không bị lỗi validate trước đó
-- II. Open Claim List
-+ TC07: Mở trang claim list thành công
-Precondition:
-User đã đăng nhập
-Steps:
-Click menu “Claim”
-Expected Result:
-Hiển thị trang danh sách claim
-Không lỗi giao diện
-+ TC08: Hiển thị danh sách claim
-Steps:
-Login
-Mở claim list
-Expected Result:
-Hiển thị bảng hoặc danh sách claim
-Có dữ liệu nếu hệ thống có sẵn
-+ TC09: Reload trang
-Steps:
-Mở claim list
-Refresh trang
-Expected Result:
-Dữ liệu vẫn hiển thị
-Không bị mất trạng thái
-+ TC10: Tìm kiếm claim
-Steps:
-Nhập keyword hoặc Claim ID vào ô filter
-Click nút “Apply”
-Đợi danh sách reload
-Expected Result:
-Danh sách hiển thị dữ liệu phù hợp với điều kiện tìm kiếm
-Nếu tồn tại record → hiển thị đúng Claim ID trong bảng
+Hiển thị: “Đăng nhập: <email>”
+Chuyển sang trang dashboard
