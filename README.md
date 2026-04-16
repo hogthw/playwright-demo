@@ -147,3 +147,61 @@ Expected:
 Đăng nhập thành công
 Hiển thị: “Đăng nhập: <email>”
 Chuyển sang trang dashboard
+
+# DAY 4 — Playwright như RPA (Login + OTP)
+Mục tiêu
+Sử dụng Playwright như một công cụ RPA (browser automation)
+Test flow đăng nhập bằng OTP giống user thực tế
+Kiểm tra hệ thống với nhiều loại email khác nhau
+Mindset Test
+Test theo hành vi người dùng thật (low-tech user)
+Không phụ thuộc vào kỹ thuật phức tạp (IMAP, đọc mail tự động)
+Tập trung vào trải nghiệm thực tế:
+Nhập email
+Nhận OTP
+Nhập OTP thủ công
+Đăng nhập
+
+Các test đã thực hiện
+1. Validation
+Bỏ trống email
+Email sai định dạng
+Email không tồn tại
+2. OTP Fail
+Nhập OTP sai → hiển thị lỗi
+3. Login bằng OTP (RPA)
+Nhập email
+Gửi OTP
+Dừng test (page.pause())
+User tự:
+Tick CAPTCHA
+Lấy OTP từ mail (webmail)
+Nhập OTP
+Xác thực → chuyển sang dashboard
+4. Multi Email Context
+
+Test với nhiều loại email:
+
+Gmail (test@gmail.com)
+Outlook (test@outlook.com)
+Domain nội bộ (tester@vota.vn)
+
+Mục tiêu:
+
+Kiểm tra hệ thống xử lý email input
+Không cần login vào từng mail
+5. User Flow thực tế (RPA)
+
+Mô phỏng hành vi user thật:
+
+Nhập email
+Gửi OTP
+Mở mail → lấy OTP
+Tick CAPTCHA
+Nhập OTP
+Đăng nhập
+Video & Report
+Video được lưu tại:
+test-results/
+Report HTML:
+npx playwright show-report
