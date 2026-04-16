@@ -28,7 +28,7 @@ export default defineConfig({
   use: {
     /* Quan trọng: Thêm 2 dòng này để sếp thấy screenshot khi lỗi */
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    video: 'on',
 
     trace: 'on-first-retry',
   },

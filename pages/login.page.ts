@@ -1,39 +1,24 @@
-import { Page, Locator } from '@playwright/test';
+import { Page } from "@playwright/test";
 
 export class LoginPage {
-  readonly page: Page;
-  readonly url: string = 'https://stg-cm-backoffice.eton.vn/user/login';
-  readonly usernameInput: Locator;
-  readonly passwordInput: Locator;
-  readonly loginButton: Locator;
+  constructor(private page: Page) {}
 
-  constructor(page: Page) {
-    this.page = page;
-   
-    this.usernameInput = page.getByRole('textbox', { name: 'Tên người dùng' });
-    this.passwordInput = page.getByRole('textbox', { name: 'Mật khẩu' });
-    this.loginButton = page.getByRole('button', { name: 'Đăng nhập' });
+  emailInput = () => this.page.getByRole('textbox', { name: 'Thư điện tử' });
+  sendOtpBtn = () => this.page.getByRole('button', { name: 'Gửi mã OTP' });
+  otpInput = () => this.page.getByRole('textbox', { name: 'OTP' });
+  confirmBtn = () => this.page.getByRole('button', { name: 'Xác nhận' });
+
+  async goto(url: string) {
+    await this.page.goto(url);
   }
 
-  async goto() {
-    await this.page.goto(this.url);
+  async sendOTP(email: string) {
+    await this.emailInput().fill(email);
+    await this.sendOtpBtn().click();
   }
 
-  async login(user: string, pass: string) {
-  
-    if (user !== undefined) await this.usernameInput.fill(user);
-    if (pass !== undefined) await this.passwordInput.fill(pass);
-    await this.loginButton.click();
-  }
-
-  async loginWithEnter(user: string, pass: string) {
-    await this.usernameInput.fill(user);
-    await this.passwordInput.fill(pass);
-    await this.page.keyboard.press('Enter');
-  }
-
-  async clearInputs() {
-    await this.usernameInput.fill('');
-    await this.passwordInput.fill('');
+  async login(otp: string) {
+    await this.otpInput().fill(otp);
+    await this.confirmBtn().click();
   }
 }
