@@ -2,9 +2,6 @@ import { test, expect } from '@playwright/test';
 
 const URL = 'https://stg-cm-backoffice.eton.vn/vi/user/login';
 
-// =========================
-// TC01 - LOGIN SUCCESS
-// =========================
 test('TC01 - Login success', async ({ page }) => {
   await page.goto(URL);
 
@@ -13,14 +10,10 @@ test('TC01 - Login success', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Đăng nhập' }).click();
 
-  // verify login success (URL change)
   await expect(page).toHaveURL(/dashboard|home|vi/);
 });
 
 
-// =========================
-// TC02 - WRONG PASSWORD
-// =========================
 test('TC02 - Wrong password', async ({ page }) => {
   await page.goto(URL);
 
@@ -29,14 +22,10 @@ test('TC02 - Wrong password', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Đăng nhập' }).click();
 
-  // check still in login page
   await expect(page).toHaveURL(/login/);
 });
 
 
-// =========================
-// TC03 - WRONG USERNAME
-// =========================
 test('TC03 - Wrong username', async ({ page }) => {
   await page.goto(URL);
 
@@ -49,22 +38,15 @@ test('TC03 - Wrong username', async ({ page }) => {
 });
 
 
-// =========================
-// TC04 - EMPTY FIELDS
-// =========================
 test('TC04 - Empty fields', async ({ page }) => {
   await page.goto(URL);
 
   await page.getByRole('button', { name: 'Đăng nhập' }).click();
 
-  // vẫn ở login page là PASS
   await expect(page).toHaveURL(/login/);
 });
 
 
-// =========================
-// TC05 - ONLY USERNAME
-// =========================
 test('TC05 - Only username', async ({ page }) => {
   await page.goto(URL);
 
@@ -76,9 +58,6 @@ test('TC05 - Only username', async ({ page }) => {
 });
 
 
-// =========================
-// TC06 - ONLY PASSWORD
-// =========================
 test('TC06 - Only password', async ({ page }) => {
   await page.goto(URL);
 
@@ -90,9 +69,6 @@ test('TC06 - Only password', async ({ page }) => {
 });
 
 
-// =========================
-// TC07 - ENTER KEY LOGIN
-// =========================
 test('TC07 - Enter key login', async ({ page }) => {
   await page.goto(URL);
 
